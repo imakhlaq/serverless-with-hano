@@ -26,6 +26,24 @@ class AuthService {
     return sign(dbUser[0], jwtSecret, "HS256");
   }
 
-  signing(authDTO: AuthDTO) {}
+  async signing(authDTO: AuthDTO, dbURL: string, jwtSecret: string) {
+    const db = getDB(dbURL);
+    const isUserExits = await db
+      .select()
+      .from(user)
+      .where(eq(user.username, authDTO.username));
+
+    if (!isUserExits.length)
+      throw new CustomError(401, "Username doesn't exit", "/v1/auth/signing");
+
+    if (isUserExits[0].password != authDTO.password)
+      throw new CustomError(401, "Incorrect credentials", "/v1/auth/signing");
+
+    const payload = {
+      username: isUserExits[0].username,
+    };
+
+    return sign(payload, jwtSecret, "HS256");
+  }
 }
 export default AuthService;

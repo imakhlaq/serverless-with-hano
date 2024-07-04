@@ -9,10 +9,15 @@ export type Env = {
   DATABASE_URL: string;
   JWT_SECRET: string;
 };
+export type Variables = {
+  username: string;
+};
 
 const app = new Hono<{
   //env types
   Bindings: Env;
+  //jwt payload
+  Variables: Variables;
 }>().basePath("/api");
 
 // Add X-Response-Time header
@@ -36,6 +41,7 @@ app.use(
   }),
 );
 
+//JWT filter
 app.use("/blog/*", (c, next) => {
   const jwtMiddleware = jwt({
     secret: c.env.JWT_SECRET,
@@ -52,7 +58,6 @@ app.onError((err, c) => {
     // @ts-ignore
     return c.json(err, err.statusCode);
   }
-
   return c.json({ message: err.message });
 });
 

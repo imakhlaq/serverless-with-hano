@@ -11,8 +11,6 @@ const authController = new Hono<{
 const authService = new AuthService();
 
 authController.post("/signup", async function (c) {
-  //passing the db url from env to helper
-
   const body = await c.req.json();
   const signupDTO = authValid.parse(body);
   const { DATABASE_URL, JWT_SECRET } = c.env;
@@ -22,16 +20,22 @@ authController.post("/signup", async function (c) {
     DATABASE_URL,
     JWT_SECRET,
   );
-  console.log(jwtToken);
 
   return c.json({ username: signupDTO.username, jwtToken });
 });
 
 authController.post("/signing", async function (c) {
-  //passing the db url from env to helper class
-  console.log("HERE IN SIGNING");
+  const body = await c.req.json();
+  const signingDTO = authValid.parse(body);
+  const { DATABASE_URL, JWT_SECRET } = c.env;
 
-  return c.json({ message: "Hello" });
+  const jwtToken = await authService.signing(
+    signingDTO,
+    DATABASE_URL,
+    JWT_SECRET,
+  );
+
+  return c.json({ username: signingDTO.username, jwtToken });
 });
 
 export default authController;
