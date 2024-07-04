@@ -42,7 +42,7 @@ app.use(
 );
 
 //JWT filter
-app.use("/blog/*", (c, next) => {
+app.use("/v1/blog/*", (c, next) => {
   const jwtMiddleware = jwt({
     secret: c.env.JWT_SECRET,
     alg: "HS256",
