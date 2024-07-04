@@ -1,13 +1,14 @@
 import { Hono } from "hono";
-import { zValidator } from "@hono/zod-validator";
 import { authValid } from "../utils/validation/auth";
+import { Env } from "../index";
+import AuthService from "../services/auth";
 
 const authController = new Hono<{
   //env types
-  Bindings: {
-    DATABASE_URL: string;
-  };
+  Bindings: Env;
 }>();
+
+const authService = new AuthService();
 
 authController.post("/signup", async function (c) {
   //passing the db url from env to helper
@@ -15,11 +16,16 @@ authController.post("/signup", async function (c) {
   const body = await c.req.json();
   const signupDTO = authValid.parse(body);
 
-  return c.json({ message: "Hello" });
+  const { DATABASE_URL, JWT_SECRET } = c.env;
+
+  const jwtToken = authService.signup(signupDTO, DATABASE_URL, JWT_SECRET);
+
+  return c.json({ username: signupDTO.username, jwtToken });
 });
 
 authController.post("/signing", async function (c) {
   //passing the db url from env to helper class
+  console.log("HERE IN SIGNING");
 
   return c.json({ message: "Hello" });
 });

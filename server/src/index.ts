@@ -47,8 +47,7 @@ app.route("/v1/auth", authController);
 app.route("/v1/blog", blogController);
 
 app.onError((err, c) => {
-  console.error(`${err.message}`);
-  return c.text("Custom Error Message", 500);
+  return c.json({ message: JSON.parse(err.message) }, 500);
 });
 
 export default app;
