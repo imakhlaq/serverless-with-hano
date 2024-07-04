@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { authValid } from "../utils/validation/auth";
 
 const authController = new Hono<{
@@ -9,7 +10,7 @@ const authController = new Hono<{
 }>();
 
 authController.post("/signup", async function (c) {
-  //passing the db url from env to helper class
+  //passing the db url from env to helper
 
   const body = await c.req.json();
   const signupDTO = authValid.parse(body);

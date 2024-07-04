@@ -1,9 +1,54 @@
-import App from "./app";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { jwt } from "hono/jwt";
+import authController from "./controllers/auth";
+import blogController from "./controllers/blog";
 
-function main() {
-  const app = new App({ port: 3005, contextPath: "/api" });
+export type Env = {
+  DATABASE_URL: string;
+  JWT_SECRET: string;
+};
 
-  app.start();
-}
+const app = new Hono<{
+  //env types
+  Bindings: Env;
+}>().basePath("/api");
 
-main();
+// Add X-Response-Time header
+app.use("*", async (c, next) => {
+  const start = Date.now();
+  await next();
+  const ms = Date.now() - start;
+  c.header("X-Response-Time", `${ms}ms`);
+});
+
+//register middleware
+app.use(
+  "/api/*",
+  cors({
+    origin: "*",
+    allowHeaders: ["*"],
+    allowMethods: ["*"],
+    exposeHeaders: ["*"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
+
+app.use("/blog/*", (c, next) => {
+  const jwtMiddleware = jwt({
+    secret: c.env.JWT_SECRET,
+    alg: "HS256",
+  });
+  return jwtMiddleware(c, next);
+});
+
+app.route("/v1/auth", authController);
+app.route("/v1/blog", blogController);
+
+app.onError((err, c) => {
+  console.error(`${err.message}`);
+  return c.text("Custom Error Message", 500);
+});
+
+export default app;

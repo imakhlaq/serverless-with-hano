@@ -23,34 +23,6 @@ class App {
     this.contextPath = contextPath;
   }
 
-  public start() {
-    const app = new Hono<{
-      //env types
-      Bindings: Env;
-    }>().basePath(this.contextPath ?? "/api");
-
-    //register middleware
-    app.use(
-      "/api/*",
-      cors({
-        origin: "*",
-        allowHeaders: ["*"],
-        allowMethods: ["*"],
-        exposeHeaders: ["*"],
-        maxAge: 600,
-        credentials: true,
-      }),
-    );
-    app.use("/auth/*", (c, next) => {
-      const jwtMiddleware = jwt({
-        secret: c.env.JWT_SECRET,
-        alg: "HS256",
-      });
-      return jwtMiddleware(c, next);
-    });
-
-    app.route("/v1/auth", authController);
-    app.route("/v1/blog", blogController);
-  }
+  public start() {}
 }
 export default App;

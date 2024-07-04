@@ -8,6 +8,9 @@ const databaseUrl = drizzle(
   postgres(`${process.env.DATABASE_URL}`, { ssl: "require", max: 1 }),
 );
 
+/**
+ * For just doing migration using CLI.
+ */
 async function main() {
   try {
     await migrate(databaseUrl, { migrationsFolder: "./src/db/drizzle/" });
