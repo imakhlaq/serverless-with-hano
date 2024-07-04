@@ -15,10 +15,14 @@ authController.post("/signup", async function (c) {
 
   const body = await c.req.json();
   const signupDTO = authValid.parse(body);
-
   const { DATABASE_URL, JWT_SECRET } = c.env;
 
-  const jwtToken = authService.signup(signupDTO, DATABASE_URL, JWT_SECRET);
+  const jwtToken = await authService.signup(
+    signupDTO,
+    DATABASE_URL,
+    JWT_SECRET,
+  );
+  console.log(jwtToken);
 
   return c.json({ username: signupDTO.username, jwtToken });
 });

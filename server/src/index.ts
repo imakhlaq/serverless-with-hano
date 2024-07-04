@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { jwt } from "hono/jwt";
 import authController from "./controllers/auth";
 import blogController from "./controllers/blog";
+import CustomError from "./errors/custom-error";
 
 export type Env = {
   DATABASE_URL: string;
@@ -47,7 +48,12 @@ app.route("/v1/auth", authController);
 app.route("/v1/blog", blogController);
 
 app.onError((err, c) => {
-  return c.json({ message: JSON.parse(err.message) }, 500);
+  if (err instanceof CustomError) {
+    // @ts-ignore
+    return c.json(err, err.statusCode);
+  }
+
+  return c.json({ message: err.message });
 });
 
 export default app;
