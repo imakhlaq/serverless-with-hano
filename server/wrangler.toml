@@ -1,8 +1,10 @@
-name = "serverless-hano"
+name = "server"
 compatibility_date = "2023-12-01"
 
-# [vars]
-# MY_VAR = "my-variable"
+[vars]
+DATABASE_URL = "postgresql://neondb_owner:JSl3XbVsUw8W@ep-dark-breeze-a1h7xxid-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+JWT_SECRET = "SUPERRRRRRRRRSECTETTEINGNAfksngkjqopfsjfjksnfsklj"
+
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
