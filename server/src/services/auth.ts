@@ -21,9 +21,14 @@ class AuthService {
     const dbUser = await db
       .insert(user)
       .values({ username: authDTO.username, password: authDTO.password })
-      .returning({ username: user.username });
+      .returning();
 
-    return sign(dbUser[0], jwtSecret, "HS256");
+    const payload = {
+      id: dbUser[0].id,
+      username: dbUser[0].username,
+    };
+
+    return sign(payload, jwtSecret, "HS256");
   }
 
   async signing(authDTO: AuthDTO, dbURL: string, jwtSecret: string) {
@@ -40,6 +45,7 @@ class AuthService {
       throw new CustomError(401, "Incorrect credentials", "/v1/auth/signing");
 
     const payload = {
+      id: isUserExits[0].id,
       username: isUserExits[0].username,
     };
 

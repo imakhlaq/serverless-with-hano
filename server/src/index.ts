@@ -1,8 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { jwt } from "hono/jwt";
-import authController from "./controllers/auth";
-import blogController from "./controllers/blog";
+import authController from "./routes/auth";
+import blogController from "./routes/blog";
 import CustomError from "./errors/custom-error";
 
 export type Env = {
@@ -10,6 +10,7 @@ export type Env = {
   JWT_SECRET: string;
 };
 export type Variables = {
+  id: string;
   username: string;
 };
 
@@ -38,7 +39,7 @@ app.use(
     exposeHeaders: ["*"],
     maxAge: 600,
     credentials: true,
-  }),
+  })
 );
 
 //JWT filter

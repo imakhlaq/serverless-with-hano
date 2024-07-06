@@ -18,9 +18,8 @@ authController.post("/signup", async function (c) {
   const jwtToken = await authService.signup(
     signupDTO,
     DATABASE_URL,
-    JWT_SECRET,
+    JWT_SECRET
   );
-
   return c.json({ username: signupDTO.username, jwtToken });
 });
 
@@ -32,7 +31,7 @@ authController.post("/signing", async function (c) {
   const jwtToken = await authService.signing(
     signingDTO,
     DATABASE_URL,
-    JWT_SECRET,
+    JWT_SECRET
   );
 
   return c.json({ username: signingDTO.username, jwtToken });
